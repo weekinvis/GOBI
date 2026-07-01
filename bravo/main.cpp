@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include "erro.h"
 #include "args.h"
+#include "juiz.h"
 
 static inline void imprime_tutorial()
 {
@@ -15,14 +16,19 @@ static inline void imprime_tutorial()
 
 int main(const int argc, const char * argv[])
 {
+    args_t * args;
     try {
-        args_t * args = obtem_args(argc, argv);
+        args = obtem_args(argc, argv);
     } catch(std::exception& exc)
     {
         std::cerr << exc.what() << std::endl;
         imprime_tutorial();
         return ERRO_COMUM;
     } 
+
+    if(juiz(args)) return ERRO_COMUM;
+
+    free(args);
 
     return SUCESSO;
 }

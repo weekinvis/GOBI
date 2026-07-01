@@ -71,7 +71,7 @@ int obter_pasta(const int argc, const char * argv[])
 
 int obter_flags(const int argc, const char * argv[])
 {
-    int indice = -1;;
+    int indice = -1;
     for(int i = 0; i < argc; i++)
     {
         if(argv[i][0] == '-')
@@ -94,7 +94,7 @@ args_t * obtem_args(const int argc, const char * argv[])
     assert(args != NULL);
 
     if((argc - 1) < 2) throw std::runtime_error("Erro: Esperado numero maior de argumentos.");
-    if((argc - 1) > 3)  throw std::runtime_error("Erro: Esperado numero menor de argumentos.");
+    if((argc - 1) > 3) throw std::runtime_error("Erro: Esperado numero menor de argumentos.");
         
     {
         std::pair<tipo_arq_t, int> par_arquivo = obter_programa(argc, argv);
