@@ -4,6 +4,6 @@
 
 #include "args.h"
 
-void java_modulo(args_t * args);
+void java_modulo(const args& args);
 
 #endif

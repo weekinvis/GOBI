@@ -4,6 +4,6 @@
 
 #include "args.h"
 
-int juiz(args_t * args);
+int juiz(const args& args);
 
 #endif

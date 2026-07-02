@@ -8,13 +8,6 @@
 
 typedef unsigned char byte_t;
 
-typedef enum tipo_arg_e 
-{
-    RESP_ARG,
-    PROG_ARG,
-    FLAG_ARG
-} tipo_arg_t;
-
 typedef enum tipo_arq_e 
 {
     C_ARQ,
@@ -23,20 +16,20 @@ typedef enum tipo_arq_e
     JAVA_ARQ
 } tipo_arq_t;
 
-typedef struct arg_s 
+class args 
 {
-    std::string valor;
-    tipo_arg_t tipo;
+    private:
+        std::string arquivo_caminho;
+        tipo_arq_t arquivo_extensao;
+        byte_t flags;
+        std::string diretorio_res_caminho;
+    public:
+        args(std::string& arq, byte_t flags, std::string& dir, tipo_arq_t tipo);
 
-} arg_t;
+        tipo_arq_t obter_extensao() const;
 
-typedef struct args_s 
-{
-    std::vector<arg_t> valores;
-    byte_t flags;
-    tipo_arq_t extensao;
-} args_t;
+};
 
-args_t * obtem_args(const int argc, const char * argv[]);
+args obter_args(const std::vector<std::string>& sArgs);
 
 #endif

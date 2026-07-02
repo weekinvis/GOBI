@@ -4,6 +4,6 @@
 
 #include "args.h"
 
-void py_modulo(args_t * args);
+void py_modulo(const args& args);
 
 #endif

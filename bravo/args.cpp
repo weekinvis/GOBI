@@ -1,127 +1,87 @@
 #include "args.h"
-#include <cassert>
-#include <cstdlib>
 #include <stdexcept>
-#include <cstring>
-#include <iostream>
+#include <string>
 
-bool termina_com(const char * alvo, const char * comp)
+tipo_arq_t args::obter_extensao() const 
 {
-    if(strlen(comp) >= strlen(alvo)) return false;
-
-    for(size_t i = strlen(alvo) - strlen(comp), j = 0; i < strlen(alvo); i++, j++)
-    {
-        if(alvo[i] != comp[j]) return false;
-    }
-    return true;
+    return this->arquivo_extensao;
 }
 
-void obter_token_extensao(const std::string& extensao, tipo_arq_t& tok_extensao)
+args::args(std::string& arq, byte_t flags_, std::string& dir, tipo_arq_t tipo) \
+: arquivo_caminho(arq), flags(flags_), diretorio_res_caminho(dir), arquivo_extensao(tipo)
+{}
+
+static bool termina_com(const std::string& alvo, const std::string& sufixo)
 {
-    if(extensao == ".py") tok_extensao = PY_ARQ;
-    if(extensao == ".c") tok_extensao = C_ARQ;
-    if(extensao == ".cpp") tok_extensao = CPP_ARQ;
-    if(extensao == ".java") tok_extensao = JAVA_ARQ;
+    if(alvo.length() < sufixo.length()) return false;
+
+    return alvo.compare(alvo.length() - sufixo.length(), sufixo.length(), sufixo) == 0;
 }
 
-std::pair<tipo_arq_t, int> obter_programa(const int argc, const char * argv[])
+static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& sArgs)
 {
-    std::vector<std::string> extensoes = {".py", ".c", ".cpp", ".java"};
-    tipo_arq_t tok_extensao;
-    int indice = -1;
+    int res = -1;
+    tipo_arq_t ext_arq;
 
-    for(int i = 1; i < argc; i++)
+    std::vector<std::string> arq_aceitos = {".py", ".c", ".cpp", ".java"};
+
+    for(size_t i = 0; i < sArgs.size(); i++)
     {
-        for(std::string extensao : extensoes)
+        if(sArgs.at(i)[0] == '-') continue;
+        if(sArgs.at(i)[sArgs.at(i).length()-1] == '/') continue;
+
+        for(const std::string& ext_aceita : arq_aceitos)
         {
-            if(termina_com(argv[i], extensao.c_str()))
+            if(termina_com(sArgs.at(i), ext_aceita))
             {
-                if(indice != -1)
+                if(res != -1)
                 {
-                    throw std::runtime_error("Erro: Os argumentos passados contem mais de um arquivo. Envie apenas 1!");
+                    throw std::runtime_error("Erro: Multiplos arquivos passados para a linha de comando!");
                 }
-                indice = i;
-                obter_token_extensao(extensao, tok_extensao);
+                res = i;
+
+                if(sArgs.at(i) == ".py") ext_arq = PY_ARQ;
+                if(sArgs.at(i) == ".c") ext_arq = C_ARQ;
+                if(sArgs.at(i) == ".cpp") ext_arq = CPP_ARQ;
+                if(sArgs.at(i) == ".java") ext_arq = JAVA_ARQ;
+
             }
-
         }
-    }
 
-    return (indice != -1) ? (std::make_pair(tok_extensao, indice)) : \
-    throw std::runtime_error("Erro: Nao foi possivel localizar nenhum programa!");
+    }
+    return (res != -1) ? (std::make_pair(res, ext_arq)) : \
+    throw std::runtime_error("Erro: Nao foi possivel localizar o arquivo na linha de comando.");
 }
 
-int obter_pasta(const int argc, const char * argv[])
+static int info_diretorio(const std::vector<std::string>& sArgs) 
 {
-    int indice = -1;
-    for(int i = 1; i < argc; i++) 
+    int res = -1;
+
+    for(size_t i = 0; i < sArgs.size(); i++)
     {
-        if(argv[i][strlen(argv[i]) - 1] == '/')
-        {
-            if(indice != -1)
-            {
-                throw std::runtime_error("Erro: os argumentos passados contem mais de uma pasta. Envie apenas 1!");
-            }
-            indice = i;
-        }
+        if(sArgs.at(i)[sArgs.at(i).length() - 1] != '/') continue;
+
+        if(res != -1) throw std::runtime_error("Erro: Multiplos diretorios passados para a linha de comando!");
+
+        res = i;
     }
-    return (indice != -1) ? (indice) : \
-    throw std::runtime_error("Erro: Nao foi possivel localizar nenhuma pasta!");
+
+    return (res != -1) ? (res) : \
+    throw std::runtime_error("Erro: Nenhum diretorio foi encontrado! Passe um diretorio passando seu nome terminado em /");
+
 }
 
-int obter_flags(const int argc, const char * argv[])
+byte_t info_flags(const std::vector<std::string> sArgs)
 {
-    int indice = -1;
-    for(int i = 0; i < argc; i++)
-    {
-        if(argv[i][0] == '-')
-        {
-            if(indice != -1)
-            {
-                throw std::runtime_error("Erro: os argumentos passados contem mais de um demarcador de flag. Envie apenas 1!");
-            }
-            indice = i;
-        }
-    }
-    return (indice != -1) ? (indice): \
-    throw std::runtime_error("Erro: Nao foi possivel localizar nenhuma flag.");
+    return 1;
 }
 
-args_t * obtem_args(const int argc, const char * argv[])
+args obter_args(const std::vector<std::string>& sArgs)
 {
-    args_t * args = (args_t*)malloc(sizeof(args_t));
+    std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(sArgs); 
 
-    assert(args != NULL);
-
-    if((argc - 1) < 2) throw std::runtime_error("Erro: Esperado numero maior de argumentos.");
-    if((argc - 1) > 3) throw std::runtime_error("Erro: Esperado numero menor de argumentos.");
-        
-    {
-        std::pair<tipo_arq_t, int> par_arquivo = obter_programa(argc, argv);
-
-        std::string programa = argv[par_arquivo.second];
-        std::string resposta = argv[obter_pasta(argc, argv)];
-
-        arg_t flag_prog = {.valor = programa, .tipo = PROG_ARG};
-        arg_t flag_resp = {.valor = resposta, .tipo = RESP_ARG};
-
-        args->valores.push_back(flag_prog);
-        args->valores.push_back(flag_resp);
-
-        args->extensao = par_arquivo.first;
-    }
-
-    try {
-        std::string flags = argv[obter_flags(argc, argv)];
-
-        arg_t flag_arg = {.valor = flags, .tipo = FLAG_ARG};
-        
-        args->valores.push_back(flag_arg);
-
-        // ajustar_byte();
-
-    } catch(std::exception& exc)
-    {} 
-
-    return args;
+    std::string vr = sArgs.at(par_arquivo_tipo.first);
+    std::string vi = sArgs.at(info_diretorio(sArgs));
+    
+    return args(vr, info_flags(sArgs), vi, par_arquivo_tipo.second);
 }

@@ -4,6 +4,6 @@
 
 #include "args.h"
 
-void c_modulo(args_t * args);
+void c_modulo(const args& args);
 
 #endif

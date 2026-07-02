@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <optional>
 #include "erro.h"
 #include "args.h"
 #include "juiz.h"
@@ -10,25 +11,29 @@ static inline void imprime_tutorial()
                  "║ Funcionamento:                                                    ║\n" \
                  "║═══════════════════════════════════════════════════════════════════║\n" \
                  "║   ./bravo programa.[extensao] pasta_com_testes/ -flags (opcional) ║\n" \
+                 "║           exemplo: ./bravo main.c 2024PMTestes/ -av               ║\n" \
                  "╚═══════════════════════════════════════════════════════════════════╝\n" << \
                  std::endl;
 }
 
 int main(const int argc, const char * argv[])
 {
-    args_t * args;
+    std::vector<std::string> sArgs;
+    sArgs.reserve(argc - 1);
+    
+    for(int i = 1; i < argc; i++) sArgs.push_back(argv[i]);
+
+    std::optional<args> jArgs;
+
     try {
-        args = obtem_args(argc, argv);
+        jArgs = obter_args(sArgs);
+    
     } catch(std::exception& exc)
     {
         std::cerr << exc.what() << std::endl;
         imprime_tutorial();
         return ERRO_COMUM;
-    } 
-
-    if(juiz(args)) return ERRO_COMUM;
-
-    free(args);
+    }
 
     return SUCESSO;
 }

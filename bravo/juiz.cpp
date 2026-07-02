@@ -6,11 +6,11 @@
 #include "py.h"
 #include "erro.h"
 
-int juiz(args_t * args)
+int juiz(const args& args)
 {
     try 
     {
-        switch(args->extensao)
+        switch(args.obter_extensao())
         {
             case PY_ARQ:
                 py_modulo(args);
