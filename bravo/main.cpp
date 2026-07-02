@@ -18,15 +18,15 @@ static inline void imprime_tutorial()
 
 int main(const int argc, const char * argv[])
 {
-    std::vector<std::string> sArgs;
-    sArgs.reserve(argc - 1);
+    std::vector<std::string> s_args;
+    s_args.reserve(argc - 1);
     
-    for(int i = 1; i < argc; i++) sArgs.push_back(argv[i]);
+    for(int i = 1; i < argc; i++) s_args.push_back(argv[i]);
 
-    std::optional<args> jArgs;
+    std::optional<args> j_args;
 
     try {
-        jArgs = obter_args(sArgs);
+        j_args = obter_args(s_args);
     
     } catch(std::exception& exc)
     {
@@ -34,6 +34,8 @@ int main(const int argc, const char * argv[])
         imprime_tutorial();
         return ERRO_COMUM;
     }
+
+    j_main(j_args.value());
 
     return SUCESSO;
 }

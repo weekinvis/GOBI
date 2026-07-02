@@ -35,29 +35,26 @@ static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& s
     int res = -1;
     tipo_arq_t ext_arq;
 
-    std::vector<std::string> arq_aceitos = {".py", ".c", ".cpp", ".java"};
+    std::vector<std::pair<std::string, tipo_arq_t>> arq_aceitos \
+    = { {".py", PY_ARQ}, {".c", C_ARQ}, {".cpp", CPP_ARQ}, {".java", JAVA_ARQ}};
 
     for(size_t i = 0; i < sArgs.size(); i++)
     {
         if(sArgs.at(i)[0] == '-') continue;
         if(sArgs.at(i)[sArgs.at(i).length()-1] == '/') continue;
 
-        for(const std::string& ext_aceita : arq_aceitos)
+        for(size_t j = 0; j < arq_aceitos.size(); j++)
         {
-            if(termina_com(sArgs.at(i), ext_aceita))
+            if(termina_com(sArgs.at(i), arq_aceitos.at(j).first))
             {
                 if(res != -1)
                 {
-                    throw std::runtime_error("Erro: Multiplos arquivos passados para a linha de comando!");
+                    throw std::runtime_error("Erro: Mais de um arquivo de entrada.");
                 }
                 res = i;
-
-                if(sArgs.at(i) == ".py") ext_arq = PY_ARQ;
-                if(sArgs.at(i) == ".c") ext_arq = C_ARQ;
-                if(sArgs.at(i) == ".cpp") ext_arq = CPP_ARQ;
-                if(sArgs.at(i) == ".java") ext_arq = JAVA_ARQ;
-
+                ext_arq = arq_aceitos.at(j).second;
             }
+
         }
 
     }
@@ -114,8 +111,8 @@ args obter_args(const std::vector<std::string>& sArgs)
 
     set_flags(sArgs, args_g);
 
-    if(args_g.obter_bits().test(V_FLAG_P)) std::cout << "[] Argumentos criados com str: " \
-    << args_g.obter_bits() << std::endl;
+    if(args_g.obter_bits().test(V_FLAG_P)) a_print("Argumentos criados com str: ", args_g.obter_bits());
+    
 
     return args_g;
 }

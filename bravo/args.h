@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <bitset>
+#include <iostream>
 
 #define N_PERMS 8
 
@@ -39,5 +40,24 @@ class args
 
 args obter_args(const std::vector<std::string>& sArgs);
 void marcar_bit(const int pos);
+
+inline void rec_print()
+{
+}
+
+template <typename T, typename... Args>
+void rec_print(T first, Args... args)
+{
+    std::cout << first << " ";
+    rec_print(args...);
+}
+
+template <typename T, typename... Args>
+void a_print(T first, Args... args)
+{
+    std::cout << "[] " << first << " ";
+    rec_print(args...);
+    std::cout << std::endl;
+}
 
 #endif
