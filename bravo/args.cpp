@@ -1,14 +1,26 @@
 #include "args.h"
+#include <iostream>
 #include <stdexcept>
 #include <string>
+#include <bitset>
 
 tipo_arq_t args::obter_extensao() const 
 {
     return this->arquivo_extensao;
 }
 
-args::args(std::string& arq, byte_t flags_, std::string& dir, tipo_arq_t tipo) \
-: arquivo_caminho(arq), flags(flags_), diretorio_res_caminho(dir), arquivo_extensao(tipo)
+void args::marcar_bit(const int pos)
+{
+    if(pos >= 0 && pos < 8) this->flags.set(pos);
+}
+
+const std::bitset<N_PERMS>& args::obter_bits() const
+{
+    return this->flags;
+}
+
+args::args(std::string& arq, std::string& dir, tipo_arq_t tipo) \
+: arquivo_caminho(arq), diretorio_res_caminho(dir), arquivo_extensao(tipo)
 {}
 
 static bool termina_com(const std::string& alvo, const std::string& sufixo)
@@ -71,17 +83,39 @@ static int info_diretorio(const std::vector<std::string>& sArgs)
 
 }
 
-byte_t info_flags(const std::vector<std::string> sArgs)
+static void set_flags(const std::vector<std::string>& sArgs, args& args_g)
 {
-    return 1;
+    for(int i = 0; i < sArgs.size(); i++)
+    {
+        if(sArgs.at(i)[0] != '-') continue;
+
+        for(int j = 1; j < sArgs.at(i).length(); j++)
+        {
+            switch(sArgs.at(i)[j])
+            {
+                case V_FLAG_C:
+                    args_g.marcar_bit(V_FLAG_P);
+                    break;
+            }
+        }
+
+    }
+
 }
 
 args obter_args(const std::vector<std::string>& sArgs)
 {
     std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(sArgs); 
 
-    std::string vr = sArgs.at(par_arquivo_tipo.first);
-    std::string vi = sArgs.at(info_diretorio(sArgs));
-    
-    return args(vr, info_flags(sArgs), vi, par_arquivo_tipo.second);
+    std::string arq = sArgs.at(par_arquivo_tipo.first);
+    std::string dir = sArgs.at(info_diretorio(sArgs));
+
+    args args_g(arq, dir, par_arquivo_tipo.second);
+
+    set_flags(sArgs, args_g);
+
+    if(args_g.obter_bits().test(V_FLAG_P)) std::cout << "[] Argumentos criados com str: " \
+    << args_g.obter_bits() << std::endl;
+
+    return args_g;
 }
