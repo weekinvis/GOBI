@@ -9,6 +9,11 @@ tipo_arq_t args::obter_extensao() const
     return this->arquivo_extensao;
 }
 
+const std::string& args::obter_diretorio_testes() const
+{
+    return this->diretorio_res_caminho;
+}
+
 void args::marcar_bit(const int pos)
 {
     if(pos >= 0 && pos < 8) this->flags.set(pos);
@@ -28,6 +33,11 @@ static bool termina_com(const std::string& alvo, const std::string& sufixo)
     if(alvo.length() < sufixo.length()) return false;
 
     return alvo.compare(alvo.length() - sufixo.length(), sufixo.length(), sufixo) == 0;
+}
+
+const std::string& args::obter_arquivo_caminho() const
+{
+    return this->arquivo_caminho;
 }
 
 static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& sArgs)

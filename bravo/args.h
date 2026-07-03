@@ -13,6 +13,14 @@
 #define V_FLAG_C 'v'
 #define V_FLAG_P  0
 
+enum class veredito 
+{
+    AC,
+    WA,
+    RE,
+    TLE
+};
+
 typedef enum tipo_arq_e 
 {
     C_ARQ,
@@ -32,6 +40,8 @@ class args
         args(std::string& arq, std::string& dir, tipo_arq_t tipo);
 
         tipo_arq_t obter_extensao() const;
+        const std::string& obter_arquivo_caminho() const;
+        const std::string& obter_diretorio_testes() const;
 
         void marcar_bit(const int pos);
         const std::bitset<N_PERMS>& obter_bits() const;

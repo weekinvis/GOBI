@@ -27,6 +27,7 @@ int main(const int argc, const char * argv[])
 
     try {
         j_args = obter_args(s_args);
+        j_main(j_args.value());
     
     } catch(std::exception& exc)
     {
@@ -35,7 +36,6 @@ int main(const int argc, const char * argv[])
         return ERRO_COMUM;
     }
 
-    j_main(j_args.value());
 
     return SUCESSO;
 }
