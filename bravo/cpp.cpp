@@ -22,6 +22,8 @@ static void cpp_compilar_programa(const args& args)
         std::filesystem::path p(args.obter_arquivo_caminho());
         std::string nome_exct = p.stem().string();
 
+        if(args.obter_bits().test(V_FLAG_P)) std::cout << nome_exct << std::endl;
+
         cpp_comp_args.push_back("g++");
         cpp_comp_args.push_back("-std=c++20");
         cpp_comp_args.push_back("-static");

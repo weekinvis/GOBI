@@ -132,10 +132,17 @@ static veredito executar_caso(const std::pair<std::string, tipo_arq_t>& executav
 
 static void executar_testes(const args& args)
 {
+    if(args.obter_bits().test(D_FLAG_P) || args.obter_bits().test(H_FLAG_P)) return;
+
     if(args.obter_bits().test(V_FLAG_P)) a_print("Recolhendo ultimos dados...");
     namespace fs = std::filesystem;
 
     fs::path pasta(args.obter_diretorio_testes());
+
+    if(!fs::exists(pasta))
+    {
+        throw std::runtime_error("Pasta nao encontrada!");
+    }
 
     std::pair<std::string, tipo_arq_t> executavel;
 
@@ -229,23 +236,22 @@ int j_main(const args& args)
         {
             case PY_ARQ:
                 if(args.obter_bits().test(V_FLAG_P)) a_print("Python");
+
                 executar_testes(args);
                 break;
 
             case C_ARQ:
                 if(args.obter_bits().test(V_FLAG_P)) a_print("C");
+                    
                 c_modulo(args);
-
-                if(!args.obter_bits().test(D_FLAG_P))
-                    executar_testes(args);
+                executar_testes(args);
                 break;
 
             case CPP_ARQ:
                 if(args.obter_bits().test(V_FLAG_P)) a_print("C++");
-                cpp_modulo(args);
-
-                if(!args.obter_bits().test(D_FLAG_P))
-                    executar_testes(args);
+                
+                cpp_modulo(args);   
+                executar_testes(args);
                 break;
 
             case JAVA_ARQ:

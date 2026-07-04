@@ -11,9 +11,9 @@
 #define N_PERMS 8
 
 #define V_FLAG_C 'v' // para imprimir infos
-#define C_FLAG_C 'c' // para nao recompilar
+#define C_FLAG_C 'n' // para nao recompilar
 #define H_FLAG_C 'h' // ajuda
-#define D_FLAG_C 'd' // para so recompilar
+#define D_FLAG_C 'c' // para so recompilar
 
 #define V_FLAG_P  0
 #define C_FLAG_P  1

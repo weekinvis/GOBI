@@ -128,6 +128,15 @@ args obter_args(const std::vector<std::string>& s_args)
         return args_g;
     }
 
+    if(flags.test(D_FLAG_P))
+    {
+        std::string dummy = ".";
+        std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(s_args);
+        std::string arq = s_args.at(par_arquivo_tipo.first);
+        args args_g(arq, dummy, par_arquivo_tipo.second, flags);
+        return args_g;
+    }
+
     std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(s_args); 
 
     std::string arq = s_args.at(par_arquivo_tipo.first);

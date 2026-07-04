@@ -24,7 +24,7 @@ static inline void imprime_ajuda()
     std::cout << "teste/, respostas/, /algo/ <- Esses sao exemplos de argumentos reconhecidos como diretorio." << std::endl;
     std::cout << "Todas as flags devem ser indicadas por `-`." << std::endl;
     std::cout << "-h (ajuda), -v (imprimir mensagens de execucao), -hv ou -vh (ambas as funcionalidades)." << std::endl;
-    std::cout << "As flags disponiveis sao: -h (ajuda), -v (imprimir mensagens de execucao), -c (nao recompilar o programa a ser testado), -d (apenas recompilar o programa e nao testar)." << std::endl;
+    std::cout << "As flags disponiveis sao: -h (ajuda), -v (imprimir mensagens de execucao), -n (nao recompilar o programa a ser testado), -c (apenas recompilar o programa e nao testar)." << std::endl;
     std::cout << "Os arquivos de teste devem ser passados com sua extensao (programa.c), (programa.py), etc... " << std::endl;
     std::cout << "Atualmente, o programa aceita python, java, c++ e c." << std::endl;
 }
