@@ -4,6 +4,14 @@
 
 #include "args.h"
 
+enum class veredito 
+{
+    AC,
+    WA,
+    RE,
+    TLE
+};
+
 int j_main(const args& args);
 
 #endif

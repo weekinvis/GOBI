@@ -36,6 +36,5 @@ int main(const int argc, const char * argv[])
         return ERRO_COMUM;
     }
 
-
     return SUCESSO;
 }

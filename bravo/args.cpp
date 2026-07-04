@@ -103,6 +103,9 @@ static void set_flags(const std::vector<std::string>& sArgs, args& args_g)
                 case V_FLAG_C:
                     args_g.marcar_bit(V_FLAG_P);
                     break;
+                case C_FLAG_C:
+                    args_g.marcar_bit(C_FLAG_P);
+                    break;
             }
         }
 
@@ -122,7 +125,6 @@ args obter_args(const std::vector<std::string>& sArgs)
     set_flags(sArgs, args_g);
 
     if(args_g.obter_bits().test(V_FLAG_P)) a_print("Argumentos criados com str: ", args_g.obter_bits());
-    
 
     return args_g;
 }

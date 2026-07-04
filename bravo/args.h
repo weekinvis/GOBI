@@ -11,15 +11,9 @@
 #define N_PERMS 8
 
 #define V_FLAG_C 'v'
+#define C_FLAG_C 'c'
 #define V_FLAG_P  0
-
-enum class veredito 
-{
-    AC,
-    WA,
-    RE,
-    TLE
-};
+#define C_FLAG_P  1
 
 typedef enum tipo_arq_e 
 {
