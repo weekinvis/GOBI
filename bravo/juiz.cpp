@@ -147,10 +147,11 @@ static void executar_testes(const args& args)
     executavel.second = args.obter_extensao();
 
     if(args.obter_bits().test(V_FLAG_P)) a_print("Iniciando testes agora!");
+    int quantidade_respostas = 0, quantidade_respostas_certas = 0;
 
     for(int i = 1;; i++)
     {
-        int resposta_certa = 0;
+        int resposta_atual_certa = 0;
         fs::path sub_pasta = pasta / std::to_string(i);
 
         if(!fs::exists(sub_pasta))
@@ -170,14 +171,15 @@ static void executar_testes(const args& args)
             {
                 if(args.obter_bits().test(V_FLAG_P)) a_print("Pasta chegou ao fim! Sem mais testes!");
 
-                if(resposta_certa == j - 1)
+                if(resposta_atual_certa == j - 1)
                 {
                     std::cout << "Subteste n" << i << std::endl;
-                    std::cout << resposta_certa << '/' << j - 1 << " respostas corretas!" << std::endl;
+                    std::cout << resposta_atual_certa << '/' << j - 1 << " respostas corretas!" << std::endl;
                 }
 
                 break;
             }
+            quantidade_respostas++;
             fs::path resposta = sub_pasta / (std::to_string(j) + ".sol");
     
             veredito v = executar_caso(executavel, entrada, resposta, 1.0);
@@ -189,28 +191,32 @@ static void executar_testes(const args& args)
                 {
                     std::cout << "Caso " << j << ": Resposta Correta\n";
                 }
-                resposta_certa++;
+                resposta_atual_certa++;
+                quantidade_respostas_certas++;
                 erro = false;
                 break;
     
             case veredito::WA:
-                std::cout << "Caso " << j << ": Resposta Errada\nEncerrando subteste " << i << std::endl;
-
+                std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Resposta Errada" << std::endl;
                 break;
     
             case veredito::RE:
-                std::cout << "Caso " << j << ": Erro de execucao\nEncerrando subteste " << i << std::endl;
-
+                std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Erro de execucao" << std::endl;
                 break;
     
             case veredito::TLE:
-                std::cout << "Caso " << j << ": Limite de tempo atingido\nEncerrando subteste " << i << std::endl;
-
+                std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Tempo limite de execucao" << std::endl;
                 break;
+
             }
             if(erro) break;
         }
-        std::cout << "\n";
+        std::cout << std::endl;
+    }
+
+    if(quantidade_respostas == quantidade_respostas_certas) 
+    {
+        std::cout << "Essa submissao acertou todos os " << quantidade_respostas << " testes." << std::endl;
     }
 
 }
@@ -229,13 +235,17 @@ int j_main(const args& args)
             case C_ARQ:
                 if(args.obter_bits().test(V_FLAG_P)) a_print("C");
                 c_modulo(args);
-                executar_testes(args);
+
+                if(!args.obter_bits().test(D_FLAG_P))
+                    executar_testes(args);
                 break;
 
             case CPP_ARQ:
                 if(args.obter_bits().test(V_FLAG_P)) a_print("C++");
                 cpp_modulo(args);
-                executar_testes(args);
+
+                if(!args.obter_bits().test(D_FLAG_P))
+                    executar_testes(args);
                 break;
 
             case JAVA_ARQ:

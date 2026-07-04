@@ -14,18 +14,13 @@ const std::string& args::obter_diretorio_testes() const
     return this->diretorio_res_caminho;
 }
 
-void args::marcar_bit(const int pos)
-{
-    if(pos >= 0 && pos < 8) this->flags.set(pos);
-}
-
 const std::bitset<N_PERMS>& args::obter_bits() const
 {
     return this->flags;
 }
 
-args::args(std::string& arq, std::string& dir, tipo_arq_t tipo) \
-: arquivo_caminho(arq), diretorio_res_caminho(dir), arquivo_extensao(tipo)
+args::args(std::string& arq, std::string& dir, tipo_arq_t tipo, std::bitset<N_PERMS>& flags_) \
+: arquivo_caminho(arq), diretorio_res_caminho(dir), arquivo_extensao(tipo), flags(flags_)
 {}
 
 static bool termina_com(const std::string& alvo, const std::string& sufixo)
@@ -40,7 +35,7 @@ const std::string& args::obter_arquivo_caminho() const
     return this->arquivo_caminho;
 }
 
-static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& sArgs)
+static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& s_args)
 {
     int res = -1;
     tipo_arq_t ext_arq;
@@ -48,14 +43,14 @@ static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& s
     std::vector<std::pair<std::string, tipo_arq_t>> arq_aceitos \
     = { {".py", PY_ARQ}, {".c", C_ARQ}, {".cpp", CPP_ARQ}, {".java", JAVA_ARQ}};
 
-    for(size_t i = 0; i < sArgs.size(); i++)
+    for(size_t i = 0; i < s_args.size(); i++)
     {
-        if(sArgs.at(i)[0] == '-') continue;
-        if(sArgs.at(i)[sArgs.at(i).length()-1] == '/') continue;
+        if(s_args.at(i)[0] == '-') continue;
+        if(s_args.at(i)[s_args.at(i).length()-1] == '/') continue;
 
         for(size_t j = 0; j < arq_aceitos.size(); j++)
         {
-            if(termina_com(sArgs.at(i), arq_aceitos.at(j).first))
+            if(termina_com(s_args.at(i), arq_aceitos.at(j).first))
             {
                 if(res != -1)
                 {
@@ -72,13 +67,13 @@ static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& s
     throw std::runtime_error("Erro: Nao foi possivel localizar o arquivo na linha de comando.");
 }
 
-static int info_diretorio(const std::vector<std::string>& sArgs) 
+static int info_diretorio(const std::vector<std::string>& s_args) 
 {
     int res = -1;
 
-    for(size_t i = 0; i < sArgs.size(); i++)
+    for(size_t i = 0; i < s_args.size(); i++)
     {
-        if(sArgs.at(i)[sArgs.at(i).length() - 1] != '/') continue;
+        if(s_args.at(i)[s_args.at(i).length() - 1] != '/') continue;
 
         if(res != -1) throw std::runtime_error("Erro: Multiplos diretorios passados para a linha de comando!");
 
@@ -90,39 +85,55 @@ static int info_diretorio(const std::vector<std::string>& sArgs)
 
 }
 
-static void set_flags(const std::vector<std::string>& sArgs, args& args_g)
+static std::bitset<N_PERMS> set_flags(const std::vector<std::string>& s_args)
 {
-    for(int i = 0; i < sArgs.size(); i++)
+    std::bitset<N_PERMS> flags;
+    for(int i = 0; i < s_args.size(); i++)
     {
-        if(sArgs.at(i)[0] != '-') continue;
+        if(s_args.at(i)[0] != '-') continue;
 
-        for(int j = 1; j < sArgs.at(i).length(); j++)
+        for(int j = 1; j < s_args.at(i).length(); j++)
         {
-            switch(sArgs.at(i)[j])
+            switch(s_args.at(i)[j])
             {
                 case V_FLAG_C:
-                    args_g.marcar_bit(V_FLAG_P);
+                    flags.set(V_FLAG_P);
                     break;
                 case C_FLAG_C:
-                    args_g.marcar_bit(C_FLAG_P);
+                    flags.set(C_FLAG_P);
+                    break;
+                case H_FLAG_C:
+                    flags.set(H_FLAG_P);
+                    break;
+                case D_FLAG_C:
+                    flags.set(D_FLAG_P);
                     break;
             }
         }
 
     }
+    return flags;
 
 }
 
-args obter_args(const std::vector<std::string>& sArgs)
+args obter_args(const std::vector<std::string>& s_args)
 {
-    std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(sArgs); 
 
-    std::string arq = sArgs.at(par_arquivo_tipo.first);
-    std::string dir = sArgs.at(info_diretorio(sArgs));
+    std::bitset<N_PERMS> flags = set_flags(s_args);
 
-    args args_g(arq, dir, par_arquivo_tipo.second);
+    if(flags.test(H_FLAG_P))
+    {
+        std::string dummy = ".";
+        args args_g(dummy, dummy, C_ARQ, flags);
+        return args_g;
+    }
 
-    set_flags(sArgs, args_g);
+    std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(s_args); 
+
+    std::string arq = s_args.at(par_arquivo_tipo.first);
+    std::string dir = s_args.at(info_diretorio(s_args));
+
+    args args_g(arq, dir, par_arquivo_tipo.second, flags);
 
     if(args_g.obter_bits().test(V_FLAG_P)) a_print("Argumentos criados com str: ", args_g.obter_bits());
 

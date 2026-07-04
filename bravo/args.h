@@ -10,10 +10,15 @@
 
 #define N_PERMS 8
 
-#define V_FLAG_C 'v'
-#define C_FLAG_C 'c'
+#define V_FLAG_C 'v' // para imprimir infos
+#define C_FLAG_C 'c' // para nao recompilar
+#define H_FLAG_C 'h' // ajuda
+#define D_FLAG_C 'd' // para so recompilar
+
 #define V_FLAG_P  0
 #define C_FLAG_P  1
+#define H_FLAG_P  2
+#define D_FLAG_P  3
 
 typedef enum tipo_arq_e 
 {
@@ -31,13 +36,12 @@ class args
         std::bitset<N_PERMS> flags;
         std::string diretorio_res_caminho;
     public:
-        args(std::string& arq, std::string& dir, tipo_arq_t tipo);
+        args(std::string& arq, std::string& dir, tipo_arq_t tipo, std::bitset<N_PERMS>& flags_);
 
         tipo_arq_t obter_extensao() const;
         const std::string& obter_arquivo_caminho() const;
         const std::string& obter_diretorio_testes() const;
 
-        void marcar_bit(const int pos);
         const std::bitset<N_PERMS>& obter_bits() const;
 
 };
