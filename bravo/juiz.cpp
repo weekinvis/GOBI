@@ -135,8 +135,8 @@ static void executar_testes(const args& args)
     if(args.obter_bits().test(D_FLAG_P) || args.obter_bits().test(H_FLAG_P)) return;
 
     if(args.obter_bits().test(V_FLAG_P)) a_print("Recolhendo ultimos dados...");
-    namespace fs = std::filesystem;
 
+    namespace fs = std::filesystem;
     fs::path pasta(args.obter_diretorio_testes());
 
     if(!fs::exists(pasta))
@@ -154,6 +154,7 @@ static void executar_testes(const args& args)
     executavel.second = args.obter_extensao();
 
     if(args.obter_bits().test(V_FLAG_P)) a_print("Iniciando testes agora!");
+
     int quantidade_respostas = 0, quantidade_respostas_certas = 0;
 
     for(int i = 1;; i++)
@@ -193,27 +194,27 @@ static void executar_testes(const args& args)
     
             switch (v)
             {
-            case veredito::AC:
-                if(args.obter_bits().test(V_FLAG_P))
-                {
-                    std::cout << "Caso " << j << ": Resposta Correta\n";
-                }
-                resposta_atual_certa++;
-                quantidade_respostas_certas++;
-                erro = false;
-                break;
-    
-            case veredito::WA:
-                std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Resposta Errada" << std::endl;
-                break;
-    
-            case veredito::RE:
-                std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Erro de execucao" << std::endl;
-                break;
-    
-            case veredito::TLE:
-                std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Tempo limite de execucao" << std::endl;
-                break;
+                case veredito::AC:
+                    if(args.obter_bits().test(V_FLAG_P))
+                    {
+                        std::cout << "Caso " << j << ": Resposta Correta\n";
+                    }
+                    resposta_atual_certa++;
+                    quantidade_respostas_certas++;
+                    erro = false;
+                    break;
+        
+                case veredito::WA:
+                    std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Resposta Errada" << std::endl;
+                    break;
+        
+                case veredito::RE:
+                    std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Erro de execucao" << std::endl;
+                    break;
+        
+                case veredito::TLE:
+                    std::cout << "Encerrando Subteste " << i << std::endl << "Caso " << j <<": Tempo limite de execucao" << std::endl;
+                    break;
 
             }
             if(erro) break;
@@ -238,6 +239,7 @@ int j_main(const args& args)
                 if(args.obter_bits().test(V_FLAG_P)) a_print("Python");
 
                 executar_testes(args);
+                
                 break;
 
             case C_ARQ:
@@ -245,6 +247,7 @@ int j_main(const args& args)
                     
                 c_modulo(args);
                 executar_testes(args);
+
                 break;
 
             case CPP_ARQ:
@@ -252,12 +255,14 @@ int j_main(const args& args)
                 
                 cpp_modulo(args);   
                 executar_testes(args);
+
                 break;
 
             case JAVA_ARQ:
                 if(args.obter_bits().test(V_FLAG_P)) a_print("Java");
                 
                 break;
+
         }
         return SUCESSO;
 

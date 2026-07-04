@@ -91,7 +91,7 @@ void cpp_modulo(const args& args)
 
     if(args.obter_bits().test(V_FLAG_P))
     {
-        a_print("Compilacao encerrada com Sucesso!");
+        a_print("Compilacao encerrada com sucesso!");
         a_print("Usando testes com arquivo de dados local...");
     }
 

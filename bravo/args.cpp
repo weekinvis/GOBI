@@ -108,6 +108,8 @@ static std::bitset<N_PERMS> set_flags(const std::vector<std::string>& s_args)
                 case D_FLAG_C:
                     flags.set(D_FLAG_P);
                     break;
+                default:
+                    throw std::runtime_error("Flag desconhecida passada!");
             }
         }
 
@@ -128,18 +130,16 @@ args obter_args(const std::vector<std::string>& s_args)
         return args_g;
     }
 
+    std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(s_args);
+    std::string arq = s_args.at(par_arquivo_tipo.first);
+
     if(flags.test(D_FLAG_P))
     {
         std::string dummy = ".";
-        std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(s_args);
-        std::string arq = s_args.at(par_arquivo_tipo.first);
         args args_g(arq, dummy, par_arquivo_tipo.second, flags);
         return args_g;
     }
 
-    std::pair<int, tipo_arq_t> par_arquivo_tipo = info_arquivo(s_args); 
-
-    std::string arq = s_args.at(par_arquivo_tipo.first);
     std::string dir = s_args.at(info_diretorio(s_args));
 
     args args_g(arq, dir, par_arquivo_tipo.second, flags);

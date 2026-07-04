@@ -36,7 +36,8 @@ int main(const int argc, const char * argv[])
     
     for(int i = 1; i < argc; i++) s_args.push_back(argv[i]);
 
-    try {
+    try 
+    {
         args j_args = obter_args(s_args);
 
         if(!j_args.obter_bits().test(H_FLAG_P)) j_main(j_args);
