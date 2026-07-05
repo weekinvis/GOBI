@@ -4,9 +4,10 @@
 
 #include "args.h"
 
-#define ANO_INICIO 1999
-#define QNT_NIVEIS 4
-#define QNT_FASES  3
+#define UNZIP_COMANDO "unzip"
+#define ANO_INICIO     1999
+#define QNT_NIVEIS      4
+#define QNT_FASES       3
 
 enum class veredito 
 {

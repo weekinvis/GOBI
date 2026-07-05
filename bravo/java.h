@@ -4,7 +4,6 @@
 
 #include "args.h"
 
-#define UNZIP_COMANDO        "unzip"
 #define USR_JAVA_INT_CMD_LINE "/usr/bin/java"
 #define JAVA_INT_CMD_LINE     "java"
 
