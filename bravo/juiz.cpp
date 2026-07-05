@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <unistd.h>
+#include <chrono>
 #include <filesystem>
 #include <sys/wait.h>
 #include <fcntl.h>
@@ -94,7 +95,7 @@ static veredito executar_caso(const std::pair<std::string, tipo_arq_t>& executav
 
     while (true)
     {
-        pid_t r = waitpid(pid, &status, WNOHANG);
+        pid_t r = waitpid(pid, &status, 0);
 
         if (r == pid)
             break;
@@ -130,6 +131,91 @@ static veredito executar_caso(const std::pair<std::string, tipo_arq_t>& executav
     return iguais ? veredito::AC : veredito::WA;
 }
 
+static void unzip(const std::string& arquivo_zip, const args& args)
+{
+    if (arquivo_zip.find_first_of(";$&|`'\"\\") != std::string::npos) 
+    {
+        throw std::invalid_argument("Caracteres invalidos no nome do arquivo");
+    }
+
+    namespace fs = std::filesystem;
+    pid_t pid = fork();
+
+    if(pid < 0)
+        throw std::runtime_error("fork falhou");
+    if(pid == 0)
+    {
+        execlp(UNZIP_COMANDO,
+            UNZIP_COMANDO,
+            arquivo_zip.c_str(),
+            "-d",
+            args.obter_diretorio_testes().c_str(),
+            nullptr);
+        perror(UNZIP_COMANDO);
+        _exit(127);
+    }
+    int status;
+
+    waitpid(pid, &status, 0);
+
+    if(!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+    {
+        throw std::runtime_error("O comando unzip falhou com codigo de erro: " + std::to_string(WEXITSTATUS(status)));
+    }
+
+}
+
+static std::string tenta_obter_pasta(const args& args) 
+{
+    if(args.obter_bits().test(V_FLAG_P)) a_print("Tentando obter pasta");
+    namespace fs = std::filesystem;
+    const char *p[QNT_NIVEIS] = {"j", "1", "2", "s"};
+    int contador = ANO_INICIO;
+    std::string nome_executavel = fs::path(args.obter_arquivo_caminho()).stem().string();
+
+    const std::chrono::time_point now{std::chrono::system_clock::now()};
+    const std::chrono::year_month_day ymd{std::chrono::floor<std::chrono::days>(now)};
+    int ano = static_cast<int>(ymd.year());
+    
+    if(args.obter_bits().test(V_FLAG_P)) a_print("Obtido ano atual", ano);
+
+    while(contador++ != ano)
+    {
+        for(int i = 0; i < QNT_NIVEIS; i++)
+        {
+            for(int j = 1; j <=  QNT_FASES; j++)
+            {
+                std::string possivel_caminho = args.obter_diretorio_testes() + std::to_string(contador) + "f" +\
+                std::to_string(j) + "p" + p[i] + "_" + nome_executavel;
+
+                if(args.obter_bits().test(V_FLAG_P)) a_print("Testando com arquivo de nome", possivel_caminho);
+                {
+                    std::string caminho_testando = possivel_caminho + "/";
+                    fs::path possivel_pasta(caminho_testando);
+                    if(fs::exists(possivel_pasta)) 
+                    {
+                        if(args.obter_bits().test(V_FLAG_P)) a_print("Capturada pasta!", possivel_pasta);
+                        return caminho_testando;
+                    }
+                }
+                possivel_caminho = possivel_caminho + ".zip";
+                {
+                    fs::path possivel_pasta(possivel_caminho);
+                    if(fs::exists(possivel_caminho))
+                    {
+                        if(args.obter_bits().test(V_FLAG_P)) a_print("Zip encontrado! Tentando iniciar processo de extracao", possivel_caminho);
+                        unzip(possivel_caminho, args);
+                        return fs::path(possivel_caminho).replace_extension().string() + "/";
+                    }
+                }
+            }
+        }
+    }
+
+    throw std::runtime_error("Nao foi possivel encontrar a pasta!");
+
+}
+
 static void executar_testes(const args& args)
 {
     if(args.obter_bits().test(D_FLAG_P) || args.obter_bits().test(H_FLAG_P)) return;
@@ -139,9 +225,15 @@ static void executar_testes(const args& args)
     namespace fs = std::filesystem;
     fs::path pasta(args.obter_diretorio_testes());
 
-    if(!fs::exists(pasta))
+    if(!fs::exists(pasta) || !fs::exists(pasta / "1"))
     {
-        throw std::runtime_error("Pasta nao encontrada!");
+        std::string caminho_automatizado = tenta_obter_pasta(args);
+        pasta.assign(caminho_automatizado);
+
+        if(!fs::exists(pasta))
+        {
+            throw std::runtime_error("Nao foi possivel obter a pasta de teste!");
+        }
     }
 
     std::pair<std::string, tipo_arq_t> executavel;

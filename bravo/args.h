@@ -38,11 +38,11 @@ class args
     public:
         args(std::string& arq, std::string& dir, tipo_arq_t tipo, std::bitset<N_PERMS>& flags_);
 
-        tipo_arq_t obter_extensao() const;
-        const std::string& obter_arquivo_caminho() const;
-        const std::string& obter_diretorio_testes() const;
+        tipo_arq_t obter_extensao() const noexcept;
+        const std::string& obter_arquivo_caminho() const noexcept;
+        const std::string& obter_diretorio_testes() const noexcept;
 
-        const std::bitset<N_PERMS>& obter_bits() const;
+        const std::bitset<N_PERMS>& obter_bits() const noexcept;
 
 };
 

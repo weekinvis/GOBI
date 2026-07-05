@@ -4,20 +4,26 @@
 #include <string>
 #include <bitset>
 
-tipo_arq_t args::obter_extensao() const 
+tipo_arq_t args::obter_extensao() const noexcept
 {
     return this->arquivo_extensao;
 }
 
-const std::string& args::obter_diretorio_testes() const
+const std::string& args::obter_diretorio_testes() const noexcept
 {
     return this->diretorio_res_caminho;
 }
 
-const std::bitset<N_PERMS>& args::obter_bits() const
+const std::bitset<N_PERMS>& args::obter_bits() const noexcept
 {
     return this->flags;
 }
+
+const std::string& args::obter_arquivo_caminho() const noexcept
+{
+    return this->arquivo_caminho;
+}
+
 
 args::args(std::string& arq, std::string& dir, tipo_arq_t tipo, std::bitset<N_PERMS>& flags_) \
 : arquivo_caminho(arq), diretorio_res_caminho(dir), arquivo_extensao(tipo), flags(flags_)
@@ -28,11 +34,6 @@ static bool termina_com(const std::string& alvo, const std::string& sufixo)
     if(alvo.length() < sufixo.length()) return false;
 
     return alvo.compare(alvo.length() - sufixo.length(), sufixo.length(), sufixo) == 0;
-}
-
-const std::string& args::obter_arquivo_caminho() const
-{
-    return this->arquivo_caminho;
 }
 
 static std::pair<int, tipo_arq_t> info_arquivo(const std::vector<std::string>& s_args)
