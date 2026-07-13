@@ -30,5 +30,6 @@ int main() {
     // calculo e imprimo o resultado
     printf("A distancia entre os pontos dados eh: %lf\n", calcula_distancia_euclidiana(p1, p2));
 
+    // os juizes verificam se o codigo retornou sucesso
     return 0;
 }

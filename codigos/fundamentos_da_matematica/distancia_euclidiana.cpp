@@ -29,5 +29,6 @@ int main()
     std::cout << "A distancia entre os pontos dados eh de: " \
     << calcula_distancia_euclidiana(p1, p2) << std::endl;
 
+    // os juizes verificam se o codigo retornou sucesso
     return 0;
 }
