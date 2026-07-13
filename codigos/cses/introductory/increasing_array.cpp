@@ -14,45 +14,7 @@ typedef long long ll;// enunciado: https://cses.fi/problemset/result/17828745/
  
 // para agilizar...
 using namespace std;
- 
-// para essa questao, nao nos preocuparemos com argc nem argv
-int main() 
-{
-    //leio a entrada
-    int n; cin >> n;
-    
-    // para esses casos, o numero central sempre sera 1 unidade de distancia de qualquer outros dois numeros laterais...
-    // nao eh possivel gerar uma solucao com esses numeros.
-    if(n <= 3 && n != 1)
-    {
-        cout << "NO SOLUTION";
-        // encerro a execucao do programa...
-        return 0;
-    }
- 
-    // um possivel raciocinio para solucionar essa questao eh que a diferenca entre dois numeros pares ou impares consecutivos eh sempre 2.
-    // os numeros pares, nessa questao, nao comecam do 0, mas sim do 2.
-    int par_inicio = 2;
- 
-    while(par_inicio <= n)
-    {
-        cout << par_inicio << ' ';
-        par_inicio += 2;
-    }
- 
-    int impar_inicio = 1;
- 
-    while(impar_inicio <= n)
-    {
-        cout << impar_inicio << ' ';
-        impar_inicio += 2;
-    }
- 
-    return 0;
- 
-}
 
- 
 // funcao que retorna um valor positivo ou nulo, transformando negativo em 0
 int cap(int x) 
 {
