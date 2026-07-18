@@ -1,14 +1,5 @@
 // enunciado: https://cses.fi/problemset/task/1094
  
-// para esse exercicio, precisaremos utilizar apenas iostream...
-#include <iostream>
- 
-// para agilizar...
-using namespace std;
- 
-// utilizaremos long long para as somas nao darem overflow no int.
-typedef long long ll;// enunciado: https://cses.fi/problemset/result/17828745/
- 
 // para essa questao, apenas a biblioteca de input/output padrao vai ser necessaria...
 #include <iostream>
  
